@@ -14,20 +14,64 @@ struct Polygon {
 };
 
 struct Vector2 screen;
+struct Vector2 snap_offsets;
 
 void test02();
 double check_line(double c1[2], double c2[2], double scany);
+
+void draw_grid() {
+	G_rgb(0, 0.2, 0.1);
+	for (int i = snap_offsets.x; i < screen.x; i += snap_offsets.x) {
+		G_line(0, i, screen.x, i); // x0,y0,x1,y1
+		G_line(i, 0, i, screen.y);
+	}
+}
+
+int click_snap_and_save(double x[], double y[]) {
+	draw_grid();
+	G_rgb(0.8, 0, 0.4);
+	float done_area_y = 20;
+	G_fill_rectangle(0, 0, 500, done_area_y);
+	int i = 0;
+	double in[2];
+	G_wait_click(in);
+	in[0] =
+		floor((in[0] + snap_offsets.x / 2) / snap_offsets.x) * snap_offsets.x;
+	in[1] =
+		floor((in[1] + snap_offsets.y / 2) / snap_offsets.y) * snap_offsets.y;
+	while (in[1] > done_area_y) {
+		x[i] = in[0];
+		y[i] = in[1];
+		G_circle(in[0], in[1], 3);
+		G_wait_click(in);
+
+		// The magic numbers
+		in[0] = floor((in[0] + snap_offsets.x / 2) / snap_offsets.x) *
+			snap_offsets.x;
+		in[1] = floor((in[1] + snap_offsets.y / 2) / snap_offsets.y) *
+			snap_offsets.y;
+
+		if (in[1] > done_area_y) {
+			G_line(in[0], in[1], x[i], y[i]);
+		} else {
+			G_line(x[i], y[i], x[0], y[0]);
+		}
+		i++;
+	}
+	return i;
+}
 
 int click_and_save(double x[], double y[]) {
 	float done_area_y = 20;
 	G_fill_rectangle(0, 0, screen.x, done_area_y);
 	int i = 0;
 	double in[2];
+	G_rgb(0.8, 0, 0.4);
 	G_wait_click(in);
 	while (in[1] > done_area_y) {
 		x[i] = in[0];
 		y[i] = in[1];
-		G_circle(in[0], in[1], 3);
+		G_fill_circle(in[0], in[1], 2);
 		G_wait_click(in);
 		if (in[1] > done_area_y) {
 			G_line(in[0], in[1], x[i], y[i]);
@@ -48,6 +92,7 @@ void sort(double a[], int n) {
 	printf("\n");
 	*/
 
+	// this is a "selection sort"
 	double t, r;
 	int p;
 	// go through array starting at the end
@@ -73,6 +118,8 @@ void sort(double a[], int n) {
 	*/
 }
 
+// thought: instead of starting at bottom of screen, start at lowest y val, work
+// up to highest y val
 int poly_fill(struct Polygon poly) {
 	// initialize line array
 	double lines[1000][2][2];
@@ -178,7 +225,7 @@ double check_line(double c1[2], double c2[2], double scany) {
 
 	G_rgb(1, 0, 0);
 
-	if (scany > ybounds[0] && scany <= ybounds[1]) {
+	if (scany >= ybounds[0] && scany < ybounds[1]) {
 		G_rgb(1, 1, 0);
 		double c, ydiff, x;
 
@@ -213,8 +260,11 @@ void test02() {
 	int m;
 	double P[2];
 
+	snap_offsets.x = 20;
+	snap_offsets.y = 20;
+
 	G_rgb(1, 0, 0);
-	m = click_and_save(xp, yp);
+	m = click_snap_and_save(xp, yp);
 
 	struct Polygon poly1;
 

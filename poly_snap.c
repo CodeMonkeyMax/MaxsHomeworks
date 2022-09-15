@@ -15,7 +15,7 @@ void print_poly(double x[], double y[], int n) {
 double polygon_perimeter(double x[], double y[], int n) {
 	double a, b, c, p;
 	int i, j;
-graph_
+
 	p = 0.0;
 	for (i = 0; i < n; i++) {
 		j = i + 1;
