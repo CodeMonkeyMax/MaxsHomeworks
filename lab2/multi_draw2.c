@@ -1,10 +1,11 @@
 #include "FPToolkit.c"
-#include "maxpolyfill.c"
+#include "maxpolytools.c"
 #include <math.h>
 #include <stdio.h>
 
-// FIXME: sometimes multi_draw gets sad and disfigures my first object
-// No longer first object.
+// Multi Draw 2: draws up to 10 .xy objects, given at start
+
+// FIXME: sometimes multi_draw gets sad and disfigures one object
 
 // # is a symbol for compile-time directives
 #define MAXOBJS 10
@@ -38,14 +39,6 @@ int main(int argc, char **argv) {
 		read_object(W, i - 1);
 		center_and_scale(i - 1);
 	}
-
-	/*
-	for (int i = 0; i < numobjs; i++) {
-		center_and_scale(i);
-		draw_object(i);
-		G_wait_key();
-	}
-	*/
 
 	int k, obj;
 	do {

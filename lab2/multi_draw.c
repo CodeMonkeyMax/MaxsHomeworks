@@ -3,6 +3,8 @@
 #include <math.h>
 #include <stdio.h>
 
+// Multi Draw 1: prompts for name of, and draws, up to 10 .xy objects
+
 // FIXME: sometimes multi_draw gets sad and disfigures my first object
 // No longer first object.
 

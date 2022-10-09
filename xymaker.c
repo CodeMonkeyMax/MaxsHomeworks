@@ -1,4 +1,4 @@
-#include "FPToolkit.c"
+ #include "FPToolkit.c"
 #include "maxpolytools.c"
 
 int swidth, sheight, n;
@@ -21,33 +21,37 @@ double poly_rgb[MAXPOLYS][3];
 void click_and_save(double grid_size) {
 	float done_area_y = 20;
 	float done_area_x = 20;
-	G_rgb(1, 1, 0);
-	G_fill_rectangle(0, 0, 500, done_area_y);
-	G_rgb(1, 0, 0);
-	G_fill_rectangle(0, 0, done_area_x, done_area_y);
 	int i = 0;
 	int j = 0;
 	double in[2];
 	numpoints = 0;
 	numpolys = 0;
+	G_rgb(1, 1, 0);
+	G_fill_rectangle(0, 0, 500, done_area_y);
 	G_wait_click(in);
+	// Snapping
 	in[0] = floor((in[0] + grid_size / 2) / grid_size) * grid_size;
 	in[1] = floor((in[1] + grid_size / 2) / grid_size) * grid_size;
 	while (True) {
 		con[i][j] = j + numpoints;
 		x[j + numpoints] = in[0];
 		y[j + numpoints] = in[1];
+
+		G_rgb(0, 1, 1);
 		G_circle(in[0], in[1], 3);
 		G_wait_click(in);
-
-		// The magic numbers
+		// Snapping
 		in[0] = floor((in[0] + grid_size / 2) / grid_size) * grid_size;
 		in[1] = floor((in[1] + grid_size / 2) / grid_size) * grid_size;
 
 		if (in[1] > done_area_y) {
+			G_rgb(0, 1, 1);
 			G_line(in[0], in[1], x[j + numpoints], y[j + numpoints]);
 			j++;
 		} else {
+			G_rgb(1, 0, 0);
+			G_fill_rectangle(0, 0, done_area_x, done_area_y);
+			G_rgb(0, 1, 1);
 			G_line(
 				x[j + numpoints],
 				y[j + numpoints],
@@ -56,19 +60,25 @@ void click_and_save(double grid_size) {
 			j++;
 			psize[i] = j;
 			double rgb[3] = {0, 1, 1};
+
+			// FIXME: polys are not being filled.
+			printf("Calling Poly Fill. numpoints: %d. j: %d", numpoints, j);
 			sub_xy_poly_fill(x, y, numpoints, numpoints + j, rgb);
 			i++;
 			numpoints += j;
 
 			j = 0;
+
+			G_wait_click(in);
+			in[0] = floor((in[0] + grid_size / 2) / grid_size) * grid_size;
+			in[1] = floor((in[1] + grid_size / 2) / grid_size) * grid_size;
 			if (in[0] <= done_area_x) {
 				G_rgb(0.2, 1, 0.3);
 				numpolys = i;
 				return;
 			}
-			G_wait_click(in);
-			in[0] = floor((in[0] + grid_size / 2) / grid_size) * grid_size;
-			in[1] = floor((in[1] + grid_size / 2) / grid_size) * grid_size;
+			G_rgb(1, 1, 0);
+			G_fill_rectangle(0, 0, 500, done_area_y);
 		}
 	}
 }
@@ -97,7 +107,7 @@ void write_poly(char fname[]) {
 	printf("points OK \n");
 
 	// Write number of polygons
-	fprintf(W, "\n%d", numpolys);
+	fprintf(W, "%d", numpolys);
 	printf("numpolys OK \n");
 
 	// Write polygon point indices
@@ -108,6 +118,8 @@ void write_poly(char fname[]) {
 		}
 	}
 	printf("polys OK \n");
+
+	fprintf(W, "\n");
 
 	// Get polygon colors
 	for (int i = 0; i < numpolys; i++) {

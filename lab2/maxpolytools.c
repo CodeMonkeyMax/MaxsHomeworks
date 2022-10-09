@@ -37,15 +37,24 @@ void sort(double a[], int n) {
 	}
 }
 
-// thought: instead of starting at bottom of screen, start at lowest y val, work
-// up to highest y val
 int poly_fill(struct Polygon poly, double rgb[3]) {
 	G_rgb(rgb[0], rgb[1], rgb[2]);
+	int ymin, ymax;
+
 	// initialize line array
 	double lines[1000][2][2];
-	// printf("Polygon Size: %i\n", poly.size);
+
+	ymin = poly.y[0];
+	ymax = ymin;
+
 	// store lines
 	for (int i = 0; i < poly.size - 1; i++) {
+		if (poly.y[i + 1] < ymin)
+			ymin = poly.y[i + 1];
+
+		if (poly.y[i + 1] > ymax)
+			ymax poly.y[i + 1];
+
 		lines[i][0][0] = poly.x[i];
 		lines[i][0][1] = poly.y[i];
 
@@ -55,6 +64,7 @@ int poly_fill(struct Polygon poly, double rgb[3]) {
 		// Draw lines to make shape cleaner
 		G_line(lines[i][0][0], lines[i][0][1], lines[i][1][0], lines[i][1][1]);
 	}
+
 	lines[poly.size - 1][0][0] = poly.x[poly.size - 1];
 	lines[poly.size - 1][0][1] = poly.y[poly.size - 1];
 	lines[poly.size - 1][1][0] = poly.x[0];
@@ -67,10 +77,9 @@ int poly_fill(struct Polygon poly, double rgb[3]) {
 		lines[poly.size - 1][1][1]);
 
 	// start scan line loop
-	for (int i = 0; i < screen.y; i++) {
-		// if (i % 10 == 0)
-		//	G_wait_key();
+	for (int i = ymin; i < ymax; i++) {
 		double xhit[1000];
+
 		// index of xhit. Resets on every new scan line
 		int pint = 0;
 
@@ -108,12 +117,20 @@ int poly_fill(struct Polygon poly, double rgb[3]) {
 }
 
 int xy_poly_fill(double x[], double y[], int size, double rgb[3]) {
+	int ymin = y[0], ymax = y[0];
+
 	G_rgb(rgb[0], rgb[1], rgb[2]);
+
 	// initialize line array
 	double lines[1000][2][2];
-	printf("Polygon Size: %i\n", size);
+
 	// store lines
 	for (int i = 0; i < size - 1; i++) {
+		if (y[i + 1] < ymin)
+			ymin = y[i + 1];
+		if (y[i + 1] > ymax)
+			ymax = y[i + 1];
+
 		lines[i][0][0] = x[i];
 		lines[i][0][1] = y[i];
 
@@ -167,12 +184,11 @@ int xy_poly_fill(double x[], double y[], int size, double rgb[3]) {
 	return 0;
 }
 
-
 int sub_xy_poly_fill(double x[], double y[], int lo, int hi, double rgb[3]) {
 	G_rgb(rgb[0], rgb[1], rgb[2]);
 	// initialize line array
 	double lines[1000][2][2];
-	int size = hi-lo;
+	int size = hi - lo;
 	printf("Polygon Size: %i\n", size);
 	// store lines
 	for (int i = lo; i < hi - 1; i++) {
@@ -182,10 +198,10 @@ int sub_xy_poly_fill(double x[], double y[], int lo, int hi, double rgb[3]) {
 		lines[i][1][0] = x[i + 1];
 		lines[i][1][1] = y[i + 1];
 	}
-	lines[size - 1][0][0] = x[size - 1];
-	lines[size - 1][0][1] = y[size - 1];
-	lines[size - 1][1][0] = x[0];
-	lines[size - 1][1][1] = y[0];
+	lines[size - 1][0][0] = x[hi - 1];
+	lines[size - 1][0][1] = y[hi - 1];
+	lines[size - 1][1][0] = x[lo];
+	lines[size - 1][1][1] = y[lo];
 
 	// start scan line loop
 	for (int i = 0; i < screen.y; i++) {

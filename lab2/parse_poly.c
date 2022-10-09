@@ -3,6 +3,8 @@
 #include <math.h>
 #include <stdio.h>
 
+// First script: prompts for name of, and opens, 1 .xy file
+
 // # is a symbol for compile-time directives
 
 #define MAXOBJS 10
