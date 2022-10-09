@@ -65,7 +65,7 @@ int M2d_null_matrix(double a[3][3]) {
 }
 
 int M2d_make_translation(double a[3][3], double dx, double dy) {
-	// M2d_make_identity(a);
+	M2d_make_identity(a);
 	a[0][2] += dx;
 	a[1][2] += dy;
 	return 1;
@@ -84,7 +84,7 @@ int M2d_make_scaling(double a[3][3], double sx, double sy) {
 int M2d_make_rotation_cs(double a[3][3], double cs, double sn)
 // this assumes cosine and sine are already known
 {
-	// M2d_make_identity(a);
+	M2d_make_identity(a);
 
 	a[0][0] = cs;
 	a[0][1] = -sn;
@@ -117,13 +117,11 @@ int M2d_mat_mult(double res[3][3], double a[3][3], double b[3][3])
 		for (int i = 0; i < 3; i++) {
 			// for each index (row-wise) in res
 			for (int j = 0; j < 3; j++) {
-				temp[i][j] = 1;
+				temp[i][j] = 0;
 				// printf("[%d][%d] = (\n", i, j);
 				// for each
 				for (int k = 0; k < 3; k++) {
-					double sum = 0;
-					sum += a[i][k] * b[k][j];
-					temp[i][j] *= sum;
+					temp[i][j] += a[i][k] * b[k][j];
 					/*printf(
 						"[%d] %.2lf <- (%.2lf * %.2lf) \n",
 						k,

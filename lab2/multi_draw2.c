@@ -280,10 +280,24 @@ void stretch_to_fill(int obji) {
 
 	// Make "delta matrix"
 	double dmat[3][3];
+	double ddmat[3][3];
 	M2d_make_identity(dmat);
-	// printf("identity created...\n");
+	M2d_make_identity(ddmat);
 
-	// M2d_print_mat(dmat);
+	// Translate
+	printf("\nstarting translation...\n");
+	M2d_make_identity(dmat);
+	M2d_make_identity(ddmat);
+	M2d_make_translation(
+		ddmat, -(smallest[0] + xsize / 2), -(smallest[1] + ysize / 2));
+	printf("dmat:\n");
+	M2d_print_mat(dmat);
+	printf("ddmat:\n");
+	M2d_print_mat(ddmat);
+	M2d_mat_mult(dmat, ddmat, dmat);
+	printf("translation added...\n");
+	printf("dmat:\n");
+	M2d_print_mat(dmat);
 
 	// Find Scaling Coefficient, Scale
 	double xc, yc, c;
@@ -294,19 +308,30 @@ void stretch_to_fill(int obji) {
 	} else {
 		c = yc;
 	}
-	M2d_make_scaling(dmat, c, c);
-	// printf("scaling performed...\n");
-
-	// M2d_print_mat(dmat);
+	printf("\nstarting scaling...\n");
+	M2d_make_identity(ddmat);
+	M2d_make_scaling(ddmat, c, c);
+	printf("dmat:\n");
+	M2d_print_mat(dmat);
+	printf("ddmat:\n");
+	M2d_print_mat(ddmat);
+	M2d_mat_mult(dmat, ddmat, dmat);
+	printf("scaling added...\n");
+	printf("dmat:\n");
+	M2d_print_mat(dmat);
 
 	// Translate
-	M2d_make_translation(
-		dmat,
-		screen.x / 2 - c * (smallest[0] + xsize / 2),
-		screen.y / 2 - c * (smallest[1] + ysize / 2));
-	// printf("translation completed...\n");
-
-	// M2d_print_mat(dmat);
+	printf("\nstarting translation...\n");
+	M2d_make_identity(ddmat);
+	M2d_make_translation(ddmat, screen.x / 2, screen.y / 2);
+	printf("dmat:\n");
+	M2d_print_mat(dmat);
+	printf("ddmat:\n");
+	M2d_print_mat(ddmat);
+	M2d_mat_mult(dmat, ddmat, dmat);
+	printf("translation added...\n");
+	printf("dmat:\n");
+	M2d_print_mat(dmat);
 
 	// Apply Delta Matrix
 	M2d_mat_mult_points(
