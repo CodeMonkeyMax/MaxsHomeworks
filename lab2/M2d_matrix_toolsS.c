@@ -13,9 +13,6 @@ instead of (x',y',1) = (x,y,1) * M
 
 */
 
-// TODO: create "temp" matrices for when input and output matrices are the same.
-// Maybe I can save time by checking if the pointers are identical!
-
 int M2d_print_mat(double a[3][3]) {
 	int r, c;
 	for (r = 0; r < 3; r++) {
@@ -68,9 +65,9 @@ int M2d_null_matrix(double a[3][3]) {
 }
 
 int M2d_make_translation(double a[3][3], double dx, double dy) {
-	M2d_make_identity(a);
-	a[0][2] = dx;
-	a[1][2] = dy;
+	// M2d_make_identity(a);
+	a[0][2] += dx;
+	a[1][2] += dy;
 	return 1;
 }
 
@@ -87,7 +84,7 @@ int M2d_make_scaling(double a[3][3], double sx, double sy) {
 int M2d_make_rotation_cs(double a[3][3], double cs, double sn)
 // this assumes cosine and sine are already known
 {
-	M2d_make_identity(a);
+	// M2d_make_identity(a);
 
 	a[0][0] = cs;
 	a[0][1] = -sn;
@@ -120,12 +117,13 @@ int M2d_mat_mult(double res[3][3], double a[3][3], double b[3][3])
 		for (int i = 0; i < 3; i++) {
 			// for each index (row-wise) in res
 			for (int j = 0; j < 3; j++) {
-				temp[i][j] = 0;
+				temp[i][j] = 1;
 				// printf("[%d][%d] = (\n", i, j);
 				// for each
-				double sum[3];
 				for (int k = 0; k < 3; k++) {
-					temp[i][j] += a[i][k] * b[k][j];
+					double sum = 0;
+					sum += a[i][k] * b[k][j];
+					temp[i][j] *= sum;
 					/*printf(
 						"[%d] %.2lf <- (%.2lf * %.2lf) \n",
 						k,
@@ -187,28 +185,13 @@ int M2d_mat_mult_points(
 // SAFE, user may make a call like M2d_mat_mult_points (x,y, m, x,y, n) ;
 {
 	// YOU NEED TO FILL THIS IN
-	if (1 == 0) {
-		double tempX;
-		double tempY;
-		printf("true\n");
-		for (int i = 0; i < numpoints; i++) {
-			tempX = (m[0][0] * x[i] + m[1][0] * y[i] + m[2][0]);
-			tempY = (m[0][1] * x[i] + m[1][1] * y[i] + m[2][1]);
-		}
-		for (int i = 0; i < numpoints; i++) {
-			X[i] = tempX;
-			Y[i] = tempY;
-		}
-		return 1;
-	} else {
-		double tempX;
-		double tempY;
-		for (int i = 0; i < numpoints; i++) {
-			tempX = (m[0][0] * x[i] + m[0][1] * y[i] + m[0][2]);
-			tempY = (m[1][0] * x[i] + m[1][1] * y[i] + m[1][2]);
-			X[i] = tempX;
-			Y[i] = tempY;
-		}
-		return 1;
+	double tempX;
+	double tempY;
+	for (int i = 0; i < numpoints; i++) {
+		tempX = (m[0][0] * x[i] + m[0][1] * y[i] + m[0][2]);
+		tempY = (m[1][0] * x[i] + m[1][1] * y[i] + m[1][2]);
+		X[i] = tempX;
+		Y[i] = tempY;
 	}
+	return 1;
 }

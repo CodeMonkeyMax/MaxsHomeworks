@@ -18,6 +18,12 @@ struct Vector2 snap_offsets;
 
 double check_line(double c1[2], double c2[2], double scany);
 
+void print_xy(double x[], double y[], int n) {
+	printf("Polygon Coordinates:\n");
+	for (int i = 0; i < n; i++) {
+		printf("%8.3lf, %8.3lf\n", x[i], y[i]);
+	}
+}
 void sort(double a[], int n) {
 	double t, r;
 	int p;
