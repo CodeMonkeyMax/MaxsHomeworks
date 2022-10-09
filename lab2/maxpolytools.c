@@ -53,7 +53,7 @@ int poly_fill(struct Polygon poly, double rgb[3]) {
 			ymin = poly.y[i + 1];
 
 		if (poly.y[i + 1] > ymax)
-			ymax poly.y[i + 1];
+			ymax = poly.y[i + 1];
 
 		lines[i][0][0] = poly.x[i];
 		lines[i][0][1] = poly.y[i];

@@ -76,10 +76,6 @@ int M2d_make_translation(double a[3][3], double dx, double dy) {
 
 int M2d_make_scaling(double a[3][3], double sx, double sy) {
 	// YOU NEED TO FILL THIS IN
-	M2d_make_identity(a);
-	/*    | 1 0 0 |
-	 *    | 0 1 0 |
-	 */// | 0 0 1 |
 	a[0][0] *= sx;
 	a[1][1] *= sy;
 	/*    | sx 0  0 |

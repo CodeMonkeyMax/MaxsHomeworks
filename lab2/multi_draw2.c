@@ -1,4 +1,5 @@
 #include "FPToolkit.c"
+#include "M2d_matrix_toolsS.c"
 #include "maxpolytools.c"
 #include <math.h>
 #include <stdio.h>
@@ -59,16 +60,9 @@ int main(int argc, char **argv) {
 }
 
 void rotate(int obji, double t) {
-	int i;
-	double temp, c, s;
-	c = cos(t);
-	s = sin(t);
-	t *= M_PI / 180;
-	for (int i = 0; i < numpoints[obji]; i++) {
-		temp = x[obji][i] * c - y[obji][i] * s;
-		y[obji][i] = x[obji][i] * s + y[obji][i] * c;
-		x[obji][i] = temp;
-	}
+	double mat[3][3];
+	M2d_make_identity(mat);
+	M2d_print_mat(mat);
 }
 
 void read_object(FILE *f, int obji) {
@@ -157,16 +151,8 @@ void center_and_scale(int obji) {
 	ysize = biggest[1] - smallest[1];
 	printf("\nShape Size: ( %lf x %lf )\n", xsize, ysize);
 
-	// Overheard Jeff advice: center points at origin, then scale, then move
-	// (preserves precision for floats and stuff)
-
-	// Center Shape
-	// printf("Centering...\n");
-
 	translate(obji, -(smallest[0] + xsize / 2), -(smallest[1] + ysize / 2));
 
-	// Scale Shape
-	// printf("Scaling...\n");
 	double xc, yc, c;
 
 	xc = screen.x / xsize;
