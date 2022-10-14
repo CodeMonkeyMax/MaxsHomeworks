@@ -1,4 +1,4 @@
-#include "FPToolkit.c"
+#include "../maxlib/FPToolkit.c"
 
 int swidth, sheight;
 

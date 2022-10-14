@@ -1,6 +1,6 @@
-#include "../maxlib/FPToolkit.c"
-#include "../maxlib/M2d_matrix_toolsS.c"
-#include "../maxlib/max_poly_tools.c"
+#include "FPToolkit.c"
+#include "M2d_matrix_toolsS.c"
+#include "max_poly_tools.c"
 #include <math.h>
 #include <stdio.h>
 
@@ -26,49 +26,6 @@ void draw_object(int obji);
 void center_and_scale(int obji);
 void stretch_to_fill(int obji);
 void rotate(int obji, double t);
-
-// MAIN # # # # # # # # # # # # # # # # # # # # #
-int main(int argc, char **argv) {
-	// Initialize graphics
-	double swidth = 450;
-	double sheight = 450;
-	screen.x = swidth;
-	screen.y = sheight;
-	G_init_graphics(screen.x, screen.y);
-
-	// Read & Initialize Objects
-	for (int i = 1; i < argc; i++) {
-		FILE *W;
-		W = fopen(argv[i], "r");
-		read_object(W, i - 1);
-		// print_xy(x[i - 1], y[i - 1], numpoints[i - 1]);
-		stretch_to_fill(i - 1);
-		// print_xy(x[i - 1], y[i - 1], numpoints[i - 1]);
-		G_rgb(0, 0, 0);
-		G_clear();
-	}
-
-	int k, obj;
-	do {
-		k = G_wait_key();
-		// printf("argc-1 = %d\n", argc - 1);
-		if (k - 48 >= 0 && k - 48 < argc - 1) {
-			G_rgb(0, 0, 0);
-			G_clear();
-			obj = k - '0';
-			printf("Current Object set: %d\n", obj);
-			draw_object(obj);
-		}
-		if (k == 32) {
-			printf("Rotating Object %d\n", obj);
-
-			rotate(obj, 0.1);
-			printf("Object [%d] rotation complete, drawing object...\n", obj);
-			draw_object(obj);
-		}
-	} while (k != 'q');
-	exit(0);
-}
 
 // ROTATE # # # # # # # # # # # # # # # # # # # #
 void rotate(int obji, double t) {

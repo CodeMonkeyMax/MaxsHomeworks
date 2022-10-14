@@ -18,6 +18,60 @@ struct Vector2 snap_offsets;
 
 double check_line(double c1[2], double c2[2], double scany);
 
+int click_snap_and_save(double x[], double y[]) {
+	G_rgb(0.8, 0, 0.4);
+	float done_area_y = 20;
+	G_fill_rectangle(0, 0, 500, done_area_y);
+	int i = 0;
+	double in[2];
+	G_wait_click(in);
+	in[0] =
+		floor((in[0] + snap_offsets.x / 2) / snap_offsets.x) * snap_offsets.x;
+	in[1] =
+		floor((in[1] + snap_offsets.y / 2) / snap_offsets.y) * snap_offsets.y;
+	while (in[1] > done_area_y) {
+		x[i] = in[0];
+		y[i] = in[1];
+		G_circle(in[0], in[1], 3);
+		G_wait_click(in);
+
+		// The magic numbers
+		in[0] = floor((in[0] + snap_offsets.x / 2) / snap_offsets.x) *
+			snap_offsets.x;
+		in[1] = floor((in[1] + snap_offsets.y / 2) / snap_offsets.y) *
+			snap_offsets.y;
+
+		if (in[1] > done_area_y) {
+			G_line(in[0], in[1], x[i], y[i]);
+		} else {
+			G_line(x[i], y[i], x[0], y[0]);
+		}
+		i++;
+	}
+	return i;
+}
+
+int click_and_save(double x[], double y[]) {
+	float done_area_y = 20;
+	G_fill_rectangle(0, 0, 400, done_area_y);
+	int i = 0;
+	double in[2];
+	G_wait_click(in);
+	while (in[1] > done_area_y) {
+		x[i] = in[0];
+		y[i] = in[1];
+		G_circle(in[0], in[1], 3);
+		G_wait_click(in);
+		if (in[1] > done_area_y) {
+			G_line(in[0], in[1], x[i], y[i]);
+		} else {
+			G_line(x[i], y[i], x[0], y[0]);
+		}
+		i++;
+	}
+	return i;
+}
+
 void print_xy(double x[], double y[], int n) {
 	printf("Polygon Coordinates:\n");
 	for (int i = 0; i < n; i++) {
